@@ -8,9 +8,11 @@ import java.util.Scanner;
 
 public class PlayingWithWords {
 
-    private static void printLongWordMeanings(ArrayList<Word> words) {
+    private static final int longWordLength = 6;
+
+    private static void printMeaningsOfLongWords(ArrayList<Word> words) {
         for (Word word: words) {
-            if (word.getWord().length() > 6) {
+            if (word.getWord().length() > longWordLength) {
                 System.out.println(word.getWordMeaning());
             }
         }
@@ -30,7 +32,7 @@ public class PlayingWithWords {
 
         ArrayList<Word> theBookThiefWords = theBookThief.getWords();
 
-        printLongWordMeanings(theBookThiefWords);
+        printMeaningsOfLongWords(theBookThiefWords);
 
         Scanner user_input = new Scanner(System.in);
 
@@ -41,7 +43,7 @@ public class PlayingWithWords {
         String new_meaning = user_input.next();
 
         theBookThief.insertWord(new Word(new_word, new_meaning));
-        printLongWordMeanings(theBookThief.getWords());
+        printMeaningsOfLongWords(theBookThief.getWords());
 
     }
 }
