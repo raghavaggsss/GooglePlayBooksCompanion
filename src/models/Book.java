@@ -2,13 +2,10 @@ package models;
 
 import java.util.ArrayList;
 
-public class Book {
+public class Book extends Words {
     private String title;
     private String author;
-    private ArrayList<Word> words;
-    private ArrayList<String> characters;
-    private static final int longWordLength = 6;
-
+    private ArrayList<Character> characters;
 
     // EFFECT: Create a new book object with title
     public Book(String title) {
@@ -16,39 +13,28 @@ public class Book {
         words = new ArrayList<>();
     }
 
-    // EFFECT: Return the words of a book
-    public ArrayList<Word> getWords() {
-        return words;
+    @Override
+    public void printWords() {
+        System.out.println("The words for " + title + " are:");
+        super.printWords();
     }
 
-
-    // MODIFIES: this
-    // EFFECT: insert a word into the book
-    public void insertWord(Word word) {
-        words.add(word);
+    public ArrayList<Character> getCharacters() {
+        return characters;
     }
 
-//    public ArrayList<String> getCharacters() {
-//        return characters;
-//    }
+    public void insertCharacter(Character c) {
+        characters.add(c);
+    }
 
-    // EFFECT: return list of long words in the book
-    public ArrayList<Word> getLongWords() {
-        ArrayList<Word> longWords = new ArrayList<>();
-        for (Word word : words) {
-            if (word.getWord().length() > longWordLength) {
-                longWords.add(word);
-            }
+    public void printCharacters() {
+        for (Character c : characters) {
+            System.out.println(c.getName());
         }
-        return longWords;
     }
 
-    // EFFECT: prints all the long words (helper for getLongWords)
-    public void printLongWords() {
-        ArrayList<Word> words = this.getLongWords();
-        for (Word word: words) {
-            System.out.println(word.getWordMeaning());
-        }
+    public void printBookTitle() {
+        System.out.println(title);
     }
 
 

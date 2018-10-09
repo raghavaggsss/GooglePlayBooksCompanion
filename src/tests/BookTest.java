@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BookTest {
     private Book theBookThief;
@@ -22,10 +23,21 @@ public class BookTest {
 
     // TODO: test multiple insertions
     @Test
-    public void testInsertWord() {
+    public void testInsertWordSingle() {
         theBookThief.insertWord(genial);
         assertEquals(1, theBookThief.getWords().size());
         assertEquals(genial, theBookThief.getWords().get(0));
+    }
+
+    @Test
+    public void testInsertWordMultiple() {
+        theBookThief.insertWord(genial);
+        theBookThief.insertWord(innocuous);
+        theBookThief.insertWord(vehement);
+        assertEquals(3, theBookThief.getWords().size());
+        assertTrue(theBookThief.getWords().contains(genial));
+        assertTrue(theBookThief.getWords().contains(innocuous));
+        assertTrue(theBookThief.getWords().contains(vehement));
     }
 
     @Test
