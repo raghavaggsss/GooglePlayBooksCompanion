@@ -1,11 +1,15 @@
 package models;
 
+import java.util.Objects;
+
 public class Character extends Words {
     private String name;
+    private Book book;
 
     public Character(String name) {
         super();
         this.name = name;
+        //initialise book name here
     }
 
     @Override
@@ -18,8 +22,31 @@ public class Character extends Words {
         return name;
     }
 
-    public void printBookTitle() {
-        System.out.println("Not known how to get this working");
+    public void addBook(Book b) {
+        this.book = b;
+        book.insertCharacter(this);
     }
 
+    public Book getBook() {
+        return book;
+    }
+
+    @Override
+    public void printBookTitle() {
+        book.printBookTitle();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Character character = (Character) o;
+        return Objects.equals(name, character.name) &&
+                Objects.equals(book.getBookTitle(), character.getBook().getBookTitle());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, book.getBookTitle());
+    }
 }

@@ -1,6 +1,7 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Book extends Words {
     private String title;
@@ -9,8 +10,9 @@ public class Book extends Words {
 
     // EFFECT: Create a new book object with title
     public Book(String title) {
+        super();
         this.title = title;
-        words = new ArrayList<>();
+        characters = new ArrayList<>();
     }
 
     @Override
@@ -24,7 +26,10 @@ public class Book extends Words {
     }
 
     public void insertCharacter(Character c) {
-        characters.add(c);
+        if (!characters.contains(c)) {
+            characters.add(c);
+            c.addBook(this);
+        }
     }
 
     public void printCharacters() {
@@ -33,11 +38,26 @@ public class Book extends Words {
         }
     }
 
+    @Override
     public void printBookTitle() {
         System.out.println(title);
     }
 
+    public String getBookTitle() {
+        return title;
+    }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return Objects.equals(title, book.title) &&
+                Objects.equals(author, book.author);
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, author);
+    }
 }

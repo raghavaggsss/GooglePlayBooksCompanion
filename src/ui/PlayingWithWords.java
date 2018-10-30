@@ -4,23 +4,38 @@ import models.Book;
 import models.Character;
 import models.POSTags;
 import models.Word;
+import models.exceptions.InvalidStringException;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class PlayingWithWords {
 
 
-    public static List<String> readWordMeanings() {
+    public static List<String> readWordMeanings() throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get("inputfile1.txt"));
+        return lines;
+
+    }
+
+    public static void writeWordMeanings(List<String> lines) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get("inputfile.txt"));
-            return lines;
+            PrintWriter writer = new PrintWriter("outputfile.txt", "UTF-8");
+            for (String line : lines) {
+                writer.println(line);
+            }
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            System.out.println("DONE!!");
         }
-        return null;
 
     }
 
@@ -30,22 +45,43 @@ public class PlayingWithWords {
 //        Path pathToFile = Paths.get(filename);
 //        System.out.println(pathToFile.toAbsolutePath().toString());
 
-        Word genial = new Word("genial", "friendly and cheerful");
-        Word innocuous = new Word("innocuous", "not harmful or offensive");
-        Word vehement = new Word("vehement", "showing strong feeling");
+
+        POSTags posTags = new POSTags();
+        Book theBookThief = new Book("The Book Thief");
+        Character liesel = new Character("Liesel");
+
+        HashMap<String, String> wordMeanings = new HashMap<>();
+        wordMeanings.put("genial", "friendly and cheerful");
+        wordMeanings.put("innocuous", "not harmful or offensive");
+        wordMeanings.put("vehement", "showing strong feeling");
+
+        try {
+            for (String word : wordMeanings.keySet()) {
+                theBookThief.insertWord(new Word(word, wordMeanings.get(word)));
+            }
+
+            liesel.insertWord(new Word("genial", wordMeanings.get("genial")));
+        } catch (InvalidStringException e) {
+            System.out.println("Invalid Word");
+        }
         // System.out.println(genial.getWordMeaning());
 
-        Book theBookThief = new Book("The Book Thief");
-        theBookThief.insertWord(genial);
-        theBookThief.insertWord(innocuous);
-        theBookThief.insertWord(vehement);
-
-        List<String> lines = readWordMeanings();
-
-        for (String line : lines) {
-            String[] parts = line.split(":");
-            theBookThief.insertWord(new Word(parts[0], parts[1]));
+        try {
+            List<String> lines = readWordMeanings();
+            for (String line : lines) {
+                String[] parts = line.split(":");
+                try {
+                    theBookThief.insertWord(new Word(parts[0], parts[1]));
+                } catch (InvalidStringException f) {
+                    System.out.println("Invalid Word or Meaning");
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("INPUT FILE NOT FOUND");
         }
+
+
+// UNPACKER
 
 
         //getLongWords(theBookThiefWords);
@@ -64,13 +100,27 @@ public class PlayingWithWords {
 
 
         //theBookThief.printLongWords();
-        Character c = new Character("Liesel");
-        c.insertWord(genial);
 
-        c.printWords();
+
+        liesel.printWords();
+        theBookThief.insertCharacter(liesel);
+
+
+        System.out.println("Liesel's book:");
+        liesel.printBookTitle();
+
 
         //NOT COMMITTED FROM HERE
-        POSTags posTags = new POSTags();
-        genial.setPosTag(posTags.adj);
+
+
+// PACKER
+        HashSet<Word> words = theBookThief.getWords();
+        List<String> linesToWrite = new ArrayList<>();
+        for (Word w : words) {
+            linesToWrite.add(w.getWordMeaning());
+        }
+        writeWordMeanings(linesToWrite);
     }
+
+
 }

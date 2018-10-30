@@ -1,18 +1,19 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public abstract class Words implements WordList, WordListPrinters {
     private static final int longWordLength = 6;
-    protected ArrayList<Word> words;
+    protected HashSet<Word> words;
 
 
     public Words() {
-        words = new ArrayList<>();
+        words = new HashSet<>();
     }
 
     // EFFECT: Return the words of a book
-    public ArrayList<Word> getWords() {
+    public HashSet<Word> getWords() {
         return words;
     }
 
@@ -48,6 +49,5 @@ public abstract class Words implements WordList, WordListPrinters {
     }
 
     abstract public void printBookTitle();
-
 
 }

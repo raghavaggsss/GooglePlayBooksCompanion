@@ -1,5 +1,9 @@
 package models;
 
+import models.exceptions.InvalidMeaningException;
+import models.exceptions.InvalidStringException;
+import models.exceptions.InvalidWordException;
+
 import java.util.ArrayList;
 
 public class Word {
@@ -8,7 +12,15 @@ public class Word {
     private String posTag;
     private ArrayList<String> usages;
 
-    public Word(String word, String meaning) {
+    public Word(String word, String meaning) throws InvalidStringException {
+        if (!(word.matches("[a-zA-Z]+"))) {
+            throw new InvalidWordException();
+        }
+
+        if (!(meaning.matches("[a-zA-Z]+"))) {
+            throw new InvalidMeaningException();
+        }
+
         this.word = word;
         this.meaning = meaning;
     }
@@ -22,7 +34,7 @@ public class Word {
     }
 
     public String getWordMeaning() {
-        String wordMeaning = word.toUpperCase() + " : " + meaning;
+        String wordMeaning = word + " : " + meaning;
         return wordMeaning;
     }
 

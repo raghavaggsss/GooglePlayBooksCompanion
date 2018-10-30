@@ -1,9 +1,10 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public interface WordList {
-    public ArrayList<Word> getWords();
+    public HashSet<Word> getWords();
 
     public void insertWord(Word word);
 
