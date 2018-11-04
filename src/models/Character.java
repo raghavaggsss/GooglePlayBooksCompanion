@@ -23,8 +23,10 @@ public class Character extends Words {
     }
 
     public void addBook(Book b) {
-        this.book = b;
-        book.insertCharacter(this);
+        if (this.book == null || !this.book.equals(b)) {
+            this.book = b;
+            book.insertCharacter(this);
+        }
     }
 
     public Book getBook() {
@@ -42,11 +44,11 @@ public class Character extends Words {
         if (o == null || getClass() != o.getClass()) return false;
         Character character = (Character) o;
         return Objects.equals(name, character.name) &&
-                Objects.equals(book.getBookTitle(), character.getBook().getBookTitle());
+                Objects.equals(book, character.getBook());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, book.getBookTitle());
+        return Objects.hash(name, book);
     }
 }
