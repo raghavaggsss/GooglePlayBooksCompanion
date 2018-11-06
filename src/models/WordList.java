@@ -1,6 +1,5 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public interface WordList {
@@ -8,5 +7,4 @@ public interface WordList {
 
     public void insertWord(Word word);
 
-    public ArrayList<Word> getLongWords();
 }

@@ -55,16 +55,15 @@ public class PlayingWithWords {
         wordMeanings.put("innocuous", "not harmful or offensive");
         wordMeanings.put("vehement", "showing strong feeling");
 
-        try {
-            for (String word : wordMeanings.keySet()) {
+        for (String word : wordMeanings.keySet()) {
+            try {
                 theBookThief.insertWord(new Word(word, wordMeanings.get(word)));
+            } catch (InvalidStringException e) {
+                System.out.println("Invalid Word");
             }
-
-            liesel.insertWord(new Word("genial", wordMeanings.get("genial")));
-        } catch (InvalidStringException e) {
-            System.out.println("Invalid Word");
         }
         // System.out.println(genial.getWordMeaning());
+        //liesel.insertWord(new Word("genial", wordMeanings.get("genial")));
 
         try {
             List<String> lines = readWordMeanings();
@@ -84,7 +83,6 @@ public class PlayingWithWords {
 // UNPACKER
 
 
-        //getLongWords(theBookThiefWords);
 
 
         //USER INPUT STUFF
@@ -98,8 +96,8 @@ public class PlayingWithWords {
 //
 //        theBookThief.insertWord(new Word(new_word, new_meaning));
 
-
-        //theBookThief.printLongWords();
+        System.out.println(theBookThief.getWords().size());
+        theBookThief.printLongWords();
 
 
         liesel.printWords();

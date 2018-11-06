@@ -1,15 +1,15 @@
 package models;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
-public abstract class Words implements WordList, WordListPrinters {
-    private static final int longWordLength = 6;
+public abstract class Words implements WordList {
     protected HashSet<Word> words;
+    protected WordListPrinters wordListPrinters;
 
 
     public Words() {
         words = new HashSet<>();
+        wordListPrinters = new WordListPrinters(words);
     }
 
     // EFFECT: Return the words of a book
@@ -30,24 +30,12 @@ public abstract class Words implements WordList, WordListPrinters {
     }
 
     // EFFECT: return list of long words in the book
-    public ArrayList<Word> getLongWords() {
-        ArrayList<Word> longWords = new ArrayList<>();
-        for (Word word : words) {
-            if (word.getWord().length() > longWordLength) {
-                longWords.add(word);
-            }
-        }
-        return longWords;
-    }
 
-    // EFFECT: prints all the long words (helper for getLongWords)
-    public void printLongWords() {
-        ArrayList<Word> words = this.getLongWords();
-        for (Word word : words) {
-            System.out.println(word.getWordMeaning());
-        }
-    }
 
     abstract public void printBookTitle();
+
+    public void printLongWords() {
+        wordListPrinters.printLongWords();
+    }
 
 }

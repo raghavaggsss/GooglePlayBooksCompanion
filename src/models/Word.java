@@ -17,7 +17,7 @@ public class Word {
             throw new InvalidWordException();
         }
 
-        if (!(meaning.matches("[a-zA-Z]+"))) {
+        if (!(meaning.matches("([a-zA-Z]\\s?)+"))) {
             throw new InvalidMeaningException();
         }
 
