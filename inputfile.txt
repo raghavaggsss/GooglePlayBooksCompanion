@@ -1,4 +1,4 @@
-excruciating : intensely painful
-flippant : not showing a serious or respectful attitude
-animosity : strong hostility
-stupendous : extremely impressive
+excruciating:intensely painful
+flippant:not showing a serious or respectful attitude
+animosity:strong hostility
+stupendous:extremely impressive

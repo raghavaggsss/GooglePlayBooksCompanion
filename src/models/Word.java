@@ -1,5 +1,6 @@
 package models;
 
+import edu.mit.jwi.item.POS;
 import models.exceptions.InvalidMeaningException;
 import models.exceptions.InvalidStringException;
 import models.exceptions.InvalidWordException;
@@ -9,7 +10,7 @@ import java.util.ArrayList;
 public class Word {
     private String word;
     private String meaning;
-    private String posTag;
+    private POS posTag;
     private ArrayList<String> usages;
 
     public Word(String word, String meaning) throws InvalidStringException {
@@ -20,6 +21,7 @@ public class Word {
         if (!(meaning.matches("([a-zA-Z]\\s?)+"))) {
             throw new InvalidMeaningException();
         }
+
 
         this.word = word;
         this.meaning = meaning;
@@ -39,9 +41,4 @@ public class Word {
     }
 
 
-
-    // NOT COMMITTED FROM HERE
-    public void setPosTag(String posTag) {
-        this.posTag = posTag;
-    }
 }

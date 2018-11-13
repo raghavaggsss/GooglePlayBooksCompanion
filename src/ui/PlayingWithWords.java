@@ -1,45 +1,53 @@
 package ui;
 
-import models.Book;
+
+import edu.mit.jwi.IDictionary;
+import models.*;
 import models.Character;
-import models.POSTags;
-import models.Word;
 import models.exceptions.InvalidStringException;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import static models.InputOutput.*;
+
 public class PlayingWithWords {
 
 
-    public static List<String> readWordMeanings() throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("inputfile1.txt"));
-        return lines;
+    public static void main(String[] args) {
 
-    }
+        Book theBookThief = new Book("The Book Thief");
 
-    public static void writeWordMeanings(List<String> lines) {
+
         try {
-            PrintWriter writer = new PrintWriter("outputfile.txt", "UTF-8");
-            for (String line : lines) {
-                writer.println(line);
+            IDictionary dict = openDictionary();
+            WordPreProcess wordPreProcess = new WordPreProcess(dict);
+
+            try {
+                List<String> lines = readWordMeanings();
+                for (String line : lines) {
+                    String[] parts = line.split(":");
+                    String word = parts[0];
+                    String meaning = parts[1];
+                    try {
+                        String wordStem = wordPreProcess.stemmer(word);
+                        theBookThief.insertWord(new Word(wordStem, meaning));
+                    } catch (InvalidStringException f) {
+                        System.out.println("Invalid Word or Meaning");
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("INPUT FILE NOT FOUND");
             }
-            writer.close();
+
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            System.out.println("DONE!!");
+            System.out.println("WORDNET NOT FOUND");
         }
 
-    }
 
-    public static void main(String[] args) {
 
 //        String filename="test.txt";
 //        Path pathToFile = Paths.get(filename);
@@ -47,7 +55,6 @@ public class PlayingWithWords {
 
 
         POSTags posTags = new POSTags();
-        Book theBookThief = new Book("The Book Thief");
         Character liesel = new Character("Liesel");
 
         HashMap<String, String> wordMeanings = new HashMap<>();
@@ -65,19 +72,7 @@ public class PlayingWithWords {
         // System.out.println(genial.getWordMeaning());
         //liesel.insertWord(new Word("genial", wordMeanings.get("genial")));
 
-        try {
-            List<String> lines = readWordMeanings();
-            for (String line : lines) {
-                String[] parts = line.split(":");
-                try {
-                    theBookThief.insertWord(new Word(parts[0], parts[1]));
-                } catch (InvalidStringException f) {
-                    System.out.println("Invalid Word or Meaning");
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("INPUT FILE NOT FOUND");
-        }
+
 
 
 // UNPACKER
@@ -96,8 +91,8 @@ public class PlayingWithWords {
 //
 //        theBookThief.insertWord(new Word(new_word, new_meaning));
 
-        System.out.println(theBookThief.getWords().size());
-        theBookThief.printLongWords();
+//        System.out.println(theBookThief.getWords().size());
+//        theBookThief.printLongWords();
 
 
         liesel.printWords();

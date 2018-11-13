@@ -1,8 +1,9 @@
 package models;
 
 import java.util.HashSet;
+import java.util.Observable;
 
-public abstract class Words implements WordList {
+public abstract class Words extends Observable implements WordList {
     protected HashSet<Word> words;
     protected WordListPrinters wordListPrinters;
 
@@ -10,6 +11,7 @@ public abstract class Words implements WordList {
     public Words() {
         words = new HashSet<>();
         wordListPrinters = new WordListPrinters(words);
+        addObserver(new WordAdditionObserver());
     }
 
     // EFFECT: Return the words of a book
@@ -26,6 +28,8 @@ public abstract class Words implements WordList {
     // MODIFIES: this
     // EFFECT: insert a word into the book
     public void insertWord(Word word) {
+        setChanged();
+        notifyObservers(word);
         words.add(word);
     }
 

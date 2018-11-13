@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="apiguardian-api-1.0.0" level="project" />
+    <orderEntry type="library" name="edu.mit.jwi_2.4.0_jdk" level="project" />
   </component>
 </module>
