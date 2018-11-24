@@ -15,7 +15,7 @@ import java.util.List;
 import static models.InputOutput.*;
 
 public class PlayingWithWords {
-
+//TODO: singleton design pattern
 
     public static void main(String[] args) {
 

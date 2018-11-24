@@ -12,6 +12,14 @@ public class Book extends Words {
     public Book(String title) {
         super();
         this.title = title;
+        this.author = "";
+        characters = new ArrayList<>();
+    }
+
+    public Book(String title, String author) {
+        super();
+        this.title = title;
+        this.author = author;
         characters = new ArrayList<>();
     }
 
