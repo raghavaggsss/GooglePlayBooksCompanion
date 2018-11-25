@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -16,6 +13,7 @@ import javafx.stage.Stage;
 import models.Book;
 import models.Button;
 import models.Word;
+import models.WordTree;
 import models.exceptions.InvalidBookTitleException;
 
 import java.util.ArrayList;
@@ -89,8 +87,8 @@ public class WordsUI extends Application {
 
         addBookStage.setScene(s);
         addBookStage.showAndWait();
-
     }
+
 
     public void wordToMeaning(Word word) {
         Stage meaningWindow = modalInit();
@@ -122,7 +120,7 @@ public class WordsUI extends Application {
         ////
         ListView<Word> listView = new ListView<>();
 
-        ArrayList<Button> buttons = new ArrayList<>();
+//        ArrayList<Button> buttons = new ArrayList<>();
 //        for (Word word : b.getWords()) {
 //            Button wordButton = new Button(word.getWord());
 //            wordButton.setOnAction(e -> wordToMeaning(word));
@@ -156,46 +154,85 @@ public class WordsUI extends Application {
 
         VBox layout = new VBox();
 
+        Menu menu = new Menu("Books");
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().add(menu);
+        MenuItem addBook = new MenuItem("Add Book");
+        addBook.setOnAction(e -> addBook());
+        menu.getItems().add(addBook);
+        MenuItem removeBook = new MenuItem("Remove Book");
+        //TODO: Implement remove book and call here
+        removeBook.setOnAction(e -> {
+        });
+        menu.getItems().add(removeBook);
+
+        layout.getChildren().add(menuBar);
+
+        TreeItem<WordTree> root = new TreeItem<>();
+        TreeView<WordTree> bookTree = new TreeView<>(root);
+        bookTree.setShowRoot(false);
+
+//        for (Book book : books) {
+//            Button bookButton = new Button(book.getBookTitle());
+//
+//            bookButton.setOnAction(e -> {
+//                window.setScene(bookToWords(book));
+//                window.setTitle(book.getBookTitle());
+//            });
+//
+//            layout.getChildren().add(bookButton);
+//        }
+
+        //// Tree View and tree items
         for (Book book : books) {
-            Button bookButton = new Button(book.getBookTitle());
-
-            bookButton.setOnAction(e -> {
-                window.setScene(bookToWords(book));
-                window.setTitle(book.getBookTitle());
-            });
-
-            layout.getChildren().add(bookButton);
+            TreeItem<WordTree> bookItem = makeBranch(book, root);
+            for (Word word : book.getWords()) {
+                TreeItem<WordTree> wordItem = makeBranch(word, bookItem);
+            }
         }
 
+        bookTree.getSelectionModel().selectedItemProperty().addListener(
+                ((v, oldValue, newValue) ->
+                {
+                    WordTree wt = newValue.getValue();
+                    if (wt instanceof Word) {
+                        wordToMeaning((Word) wt);
+                    }
+                    ;
+                })
+        );
 
-        // Add a button for adding new book
+        layout.getChildren().add(bookTree);
+
+
+//        // Add a button for adding new book
+////        Button addBookButton = new Button("Add a new book");
+////        addBookButton.setOnAction(e -> addBook());
+////        layout.getChildren().add(addBookButton);
+//
 //        Button addBookButton = new Button("Add a new book");
-//        addBookButton.setOnAction(e -> addBook());
-//        layout.getChildren().add(addBookButton);
-
-        Button addBookButton = new Button("Add a new book");
-        //addBookButton.setOnAction(e -> addBook());
-        //layout.getChildren().add(addBookButton);
-
-        Button removeBookButton = new Button("Remove an existing book");
-        //addBookButton.setOnAction(e -> addBook());
-        //layout.getChildren().add(addBookButton);
-
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(addBookButton.toString(), removeBookButton.toString());
-        comboBox.setPromptText("Options");
-
-        comboBox.setOnAction(e ->
-        {
-            String selection = comboBox.getValue();
-            if (selection.equals(addBookButton.toString())) {
-                addBook();
-            } else if (selection.equals(addBookButton.toString())) {
-                //TODO: Implement removeBook
-            }
-        });
-
-        layout.getChildren().add(comboBox);
+//        //addBookButton.setOnAction(e -> addBook());
+//        //layout.getChildren().add(addBookButton);
+//
+//        Button removeBookButton = new Button("Remove an existing book");
+//        //addBookButton.setOnAction(e -> addBook());
+//        //layout.getChildren().add(addBookButton);
+//
+//        ComboBox<String> comboBox = new ComboBox<>();
+//        comboBox.getItems().addAll(addBookButton.toString(), removeBookButton.toString());
+//        comboBox.setPromptText("Options");
+//
+//        comboBox.setOnAction(e ->
+//        {
+//            String selection = comboBox.getValue();
+//            if (selection.equals(addBookButton.toString())) {
+//                addBook();
+//            } else if (selection.equals(addBookButton.toString())) {
+//                //TODO: Implement removeBook
+//            }
+//        });
+//
+//        layout.getChildren().add(comboBox);
 
 
         home = new Scene(layout);
@@ -203,5 +240,11 @@ public class WordsUI extends Application {
         window.show();
 
 
+    }
+
+    public TreeItem<WordTree> makeBranch(WordTree book, TreeItem<WordTree> parent) {
+        TreeItem<WordTree> item = new TreeItem<>(book);
+        parent.getChildren().add(item);
+        return item;
     }
 }

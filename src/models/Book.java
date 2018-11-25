@@ -78,4 +78,9 @@ public class Book extends Words {
     public int hashCode() {
         return Objects.hash(title, author);
     }
+
+    @Override
+    public String toString() {
+        return this.getBookTitle();
+    }
 }

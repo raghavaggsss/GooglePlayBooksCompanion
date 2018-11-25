@@ -3,7 +3,7 @@ package models;
 import java.util.HashSet;
 import java.util.Observable;
 
-public abstract class Words extends Observable implements WordList {
+public abstract class Words extends Observable implements WordList, WordTree {
     protected HashSet<Word> words;
     protected WordListPrinters wordListPrinters;
 

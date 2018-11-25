@@ -7,7 +7,7 @@ import models.exceptions.InvalidWordException;
 
 import java.util.ArrayList;
 
-public class Word {
+public class Word implements WordTree {
     private String word;
     private String meaning;
     private POS posTag;
