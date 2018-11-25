@@ -4,12 +4,7 @@ except ImportError:
     from xml.etree.ElementTree import XML
 import zipfile
 
-path = "src/PlayBooks/"
-
-"""
-Module that extract text from MS XML Word document (.docx).
-(Inspired by python-docx <https://github.com/mikemaccana/python-docx>)
-"""
+path = "PlayBooks/"
 
 WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
 PARA = WORD_NAMESPACE + 'p'

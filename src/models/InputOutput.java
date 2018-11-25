@@ -19,8 +19,8 @@ public class InputOutput {
     }
 
 
-    public static List<String> readWordMeanings() throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get("inputfile.txt"));
+    public static List<String> readWordMeanings(String filename) throws IOException {
+        List<String> lines = Files.readAllLines(Paths.get(filename));
         return lines;
 
     }

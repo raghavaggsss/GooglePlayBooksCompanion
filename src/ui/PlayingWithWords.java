@@ -21,13 +21,12 @@ public class PlayingWithWords {
 
         Book theBookThief = new Book("The Book Thief");
 
-
         try {
             IDictionary dict = openDictionary();
             WordPreProcess wordPreProcess = new WordPreProcess(dict);
 
             try {
-                List<String> lines = readWordMeanings();
+                List<String> lines = readWordMeanings(" ");
                 for (String line : lines) {
                     String[] parts = line.split(":");
                     String word = parts[0];
@@ -43,7 +42,9 @@ public class PlayingWithWords {
                 System.out.println("INPUT FILE NOT FOUND");
             }
 
-        } catch (IOException e) {
+        }
+
+        catch (IOException e) {
             System.out.println("WORDNET NOT FOUND");
         }
 

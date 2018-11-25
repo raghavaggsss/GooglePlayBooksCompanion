@@ -1,5 +1,6 @@
 package ui;
 
+import edu.mit.jwi.IDictionary;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,15 +12,18 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import models.Book;
+import models.*;
 import models.Button;
-import models.Word;
-import models.WordTree;
 import models.exceptions.InvalidBookTitleException;
+import models.exceptions.InvalidStringException;
 
 import javax.imageio.IIOException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static models.InputOutput.openDictionary;
+import static models.InputOutput.readWordMeanings;
 
 public class WordsUI extends Application {
 
@@ -28,14 +32,8 @@ public class WordsUI extends Application {
     private Scene home;
     private Scene book;
     private Scene character;
-
-
+    
     public static void main(String[] args) {
-        try {
-            loadGooglePlayBookData("TNOTR.docx"); }
-        catch (IOException e) {
-            System.out.println("FUCK");
-        }
         launch(args);
     }
 
@@ -67,8 +65,17 @@ public class WordsUI extends Application {
         GridPane.setConstraints(authorLabel, 0, 1);
 
         TextField authorInput = new TextField();
-        authorInput.setPromptText("Author");
+        authorInput.setPromptText("Optional");
         GridPane.setConstraints(authorInput, 1, 1);
+
+        Label playBookDocLabel = new Label("Play Book");
+        GridPane.setConstraints(playBookDocLabel, 0, 2);
+
+        TextField playBookDocInput = new TextField();
+        playBookDocInput.setPromptText("Optional");
+        GridPane.setConstraints(playBookDocInput,1,2 );
+
+
 
         Button addBook = new Button("Add Book");
         // TODO: Popup for bookAdditionResult. Currently on the console.
@@ -78,6 +85,41 @@ public class WordsUI extends Application {
                 Book inputBook = new Book(titleInput.getText(), authorInput.getText());
                 if (!books.contains(inputBook)) {
                     books.add(inputBook);
+
+                    String playBooksDoc = playBookDocInput.getText();
+                    if (!playBooksDoc.equals("")) {
+                        loadGooglePlayBookData(playBooksDoc);
+                        String playBooksTxt = playBooksDoc.split("\\.")[0] + ".txt";
+
+                        try {
+                            IDictionary dict = openDictionary();
+                            WordPreProcess wordPreProcess = new WordPreProcess(dict);
+
+                            try {
+                                List<String> lines = readWordMeanings("PlayBooks/"+ playBooksTxt);
+                                for (String line : lines) {
+                                    String[] parts = line.split(":");
+                                    String word = parts[0];
+                                    //String meaning = parts[1];
+                                    try {
+                                        String wordStem = wordPreProcess.stemmer(word);
+                                        inputBook.insertWord(new Word(wordStem, "MEANING"));
+                                    } catch (InvalidStringException f) {
+                                        System.out.println("Invalid Word or Meaning");
+                                    }
+                                }
+                            } catch (IOException f) {
+                                System.out.println("INPUT FILE NOT FOUND");
+                            }
+
+                        }
+
+                        catch (IOException g) {
+                            System.out.println("WORDNET NOT FOUND");
+                        }
+                    }
+
+
                     bookAdditionResult.setText(titleInput.getText() + " added successfully!");
                 } else {
                     bookAdditionResult.setText(titleInput.getText() + " already exists!");
@@ -89,12 +131,14 @@ public class WordsUI extends Application {
             }
 
         });
-        GridPane.setConstraints(addBook, 1, 2);
+        GridPane.setConstraints(addBook, 1, 3);
 
-        grid.getChildren().addAll(titleLabel, titleInput, authorInput, authorLabel, addBook);
+        grid.getChildren().addAll(titleLabel, titleInput, authorInput, authorLabel,
+                addBook, playBookDocInput, playBookDocLabel);
 
         addBookStage.setScene(s);
         addBookStage.showAndWait();
+        refreshHome();
     }
 
 
@@ -104,7 +148,6 @@ public class WordsUI extends Application {
 
         Text text = new Text(word.getMeaning());
 
-        System.out.println(text);
         VBox meaning = new VBox(20);
         meaning.setAlignment(Pos.CENTER);
         meaning.getChildren().add(text);
@@ -160,6 +203,26 @@ public class WordsUI extends Application {
         window = primaryStage;
         window.setOnCloseRequest(e -> window.close());
 
+        refreshHome();
+        window.show();
+
+    }
+
+    public TreeItem<WordTree> makeBranch(WordTree book, TreeItem<WordTree> parent) {
+        TreeItem<WordTree> item = new TreeItem<>(book);
+        parent.getChildren().add(item);
+        return item;
+    }
+
+    public static void loadGooglePlayBookData(String filename){
+        try {
+        Process p = Runtime.getRuntime().exec("python3 PlayBooks/googlePlayBooks.py "+ filename); }
+        catch (IOException e) {
+            System.out.println("Problem with loading file");
+        }
+    }
+
+    public VBox homeLayoutBuilder() {
         VBox layout = new VBox();
 
         Menu menu = new Menu("Books");
@@ -204,22 +267,12 @@ public class WordsUI extends Application {
         );
 
         layout.getChildren().add(bookTree);
+        return layout;
+    }
 
-        home = new Scene(layout);
+    public void refreshHome() {
+        home = new Scene(homeLayoutBuilder());
         home.getStylesheets().add("Garage.css");
-
         window.setScene(home);
-        window.show();
-
-    }
-
-    public TreeItem<WordTree> makeBranch(WordTree book, TreeItem<WordTree> parent) {
-        TreeItem<WordTree> item = new TreeItem<>(book);
-        parent.getChildren().add(item);
-        return item;
-    }
-
-    public static void loadGooglePlayBookData(String filename) throws IOException {
-        Process p = Runtime.getRuntime().exec("python3 src/PlayBooks/googlePlayBooks.py "+ filename);
     }
 }
