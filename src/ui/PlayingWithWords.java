@@ -2,6 +2,8 @@ package ui;
 
 
 import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.POS;
+import javafx.util.Pair;
 import models.*;
 import models.Character;
 import models.exceptions.InvalidStringException;
@@ -32,7 +34,9 @@ public class PlayingWithWords {
                     String word = parts[0];
                     String meaning = parts[1];
                     try {
-                        String wordStem = wordPreProcess.stemmer(word);
+                        Pair<String, POS> pair = wordPreProcess.stemmer(word);
+                        String wordStem = pair.getKey();
+                        POS wordPOS = pair.getValue();
                         theBookThief.insertWord(new Word(wordStem, meaning));
                     } catch (InvalidStringException f) {
                         System.out.println("Invalid Word or Meaning");

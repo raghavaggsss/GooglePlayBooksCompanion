@@ -1,21 +1,27 @@
 package ui;
 
 import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.IWordID;
+import edu.mit.jwi.item.POS;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import models.*;
 import models.Button;
 import models.exceptions.InvalidBookTitleException;
 import models.exceptions.InvalidStringException;
+import models.exceptions.NoMeaningFound;
 
 import javax.imageio.IIOException;
 import java.io.IOException;
@@ -27,12 +33,14 @@ import static models.InputOutput.readWordMeanings;
 
 public class WordsUI extends Application {
 
+    POS[] pos_tags = POS.values();
+
     ArrayList<Book> books = new ArrayList<>();
     private Stage window;
     private Scene home;
     private Scene book;
     private Scene character;
-    
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -102,8 +110,22 @@ public class WordsUI extends Application {
                                     String word = parts[0];
                                     //String meaning = parts[1];
                                     try {
-                                        String wordStem = wordPreProcess.stemmer(word);
-                                        inputBook.insertWord(new Word(wordStem, "MEANING"));
+                                        Pair<String, POS> pair = wordPreProcess.stemmer(word);
+                                        String wordStem = pair.getKey();
+                                        POS wordPOS = pair.getValue();
+
+                                        //Find meaning here
+                                        try {
+                                            String meaning = meaningFinder(dict, word, wordPOS);
+
+                                            Word newWord = new Word(wordStem, meaning);
+                                            newWord.setPosTag(wordPOS);
+
+                                            inputBook.insertWord(newWord);
+                                        }
+                                        catch (NoMeaningFound np) {
+                                            System.out.println("No meaning found for " + word);
+                                        }
                                     } catch (InvalidStringException f) {
                                         System.out.println("Invalid Word or Meaning");
                                     }
@@ -118,7 +140,6 @@ public class WordsUI extends Application {
                             System.out.println("WORDNET NOT FOUND");
                         }
                     }
-
 
                     bookAdditionResult.setText(titleInput.getText() + " added successfully!");
                 } else {
@@ -149,6 +170,7 @@ public class WordsUI extends Application {
         Text text = new Text(word.getMeaning());
 
         VBox meaning = new VBox(20);
+        meaning.setPadding(new Insets(20,20,20,20));
         meaning.setAlignment(Pos.CENTER);
         meaning.getChildren().add(text);
 
@@ -158,7 +180,7 @@ public class WordsUI extends Application {
         });
         meaning.getChildren().add(backButton);
 
-        Scene meaningScene = new Scene(meaning, 200, 200);
+        Scene meaningScene = new Scene(meaning);
         meaningWindow.setScene(meaningScene);
 
         meaningWindow.showAndWait();
@@ -193,7 +215,9 @@ public class WordsUI extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Book theBookThief = new Book("The Book Thief");
-        theBookThief.insertWord(new Word("vehement", "MEaning herer ddue"));
+
+
+        theBookThief.insertWord(new Word("vehement", "YO testing"));
         theBookThief.insertWord(new Word("immoral", "not moral"));
         books.add(theBookThief);
 
@@ -262,7 +286,6 @@ public class WordsUI extends Application {
                     if (wt instanceof Word) {
                         wordToMeaning((Word) wt);
                     }
-                    ;
                 })
         );
 
@@ -274,5 +297,33 @@ public class WordsUI extends Application {
         home = new Scene(homeLayoutBuilder());
         home.getStylesheets().add("Garage.css");
         window.setScene(home);
+    }
+
+    public String meaningFinder(IDictionary dict, String word, POS wordPOS) throws NoMeaningFound {
+        String meaning = "";
+
+        try {
+            IIndexWord idxWord = dict.getIndexWord(word, wordPOS);
+            IWordID wordID = idxWord.getWordIDs().get(0);
+            meaning = dict.getWord(wordID).getSynset().getGloss();
+        } catch (NullPointerException e) {
+            for (POS pos: pos_tags) {
+                try {
+                    IIndexWord idxWord = dict.getIndexWord(word, pos);
+                    IWordID wordID = idxWord.getWordIDs().get(0);
+                    meaning = dict.getWord(wordID).getSynset().getGloss();
+                    break;
+                }
+                catch (NullPointerException f) {
+                }
+            }
+        }
+        finally {
+            if (meaning.equals("")) {
+                throw new NoMeaningFound();
+            }
+            return meaning;
+        }
+
     }
 }
