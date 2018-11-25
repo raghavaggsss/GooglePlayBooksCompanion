@@ -17,7 +17,7 @@ import static models.InputOutput.*;
 public class PlayingWithWords {
 //TODO: singleton design pattern
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         Book theBookThief = new Book("The Book Thief");
 

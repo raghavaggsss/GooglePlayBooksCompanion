@@ -1,5 +1,7 @@
 package models;
 
+import models.exceptions.InvalidBookTitleException;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -9,18 +11,26 @@ public class Book extends Words {
     private ArrayList<Character> characters;
 
     // EFFECT: Create a new book object with title
-    public Book(String title) {
+    public Book(String title) throws InvalidBookTitleException {
         super();
-        this.title = title;
-        this.author = "";
-        characters = new ArrayList<>();
+        if (!title.equals("")) {
+            this.title = title;
+            this.author = "";
+            characters = new ArrayList<>();
+        } else {
+            throw new InvalidBookTitleException();
+        }
     }
 
-    public Book(String title, String author) {
+    public Book(String title, String author) throws InvalidBookTitleException {
         super();
-        this.title = title;
-        this.author = author;
-        characters = new ArrayList<>();
+        if (!title.equals("")) {
+            this.title = title;
+            this.author = author;
+            characters = new ArrayList<>();
+        } else {
+            throw new InvalidBookTitleException();
+        }
     }
 
     @Override

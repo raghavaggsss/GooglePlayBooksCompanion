@@ -40,5 +40,8 @@ public class Word {
         return wordMeaning;
     }
 
-
+    @Override
+    public String toString() {
+        return this.getWord();
+    }
 }
