@@ -5,6 +5,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -172,20 +173,13 @@ public class WordsUI extends Application {
         TreeView<WordTree> bookTree = new TreeView<>(root);
         bookTree.setShowRoot(false);
 
-//        for (Book book : books) {
-//            Button bookButton = new Button(book.getBookTitle());
-//
-//            bookButton.setOnAction(e -> {
-//                window.setScene(bookToWords(book));
-//                window.setTitle(book.getBookTitle());
-//            });
-//
-//            layout.getChildren().add(bookButton);
-//        }
 
-        //// Tree View and tree items
         for (Book book : books) {
             TreeItem<WordTree> bookItem = makeBranch(book, root);
+
+            ImageView ig = new ImageView("book_small.png");
+            bookItem.setGraphic(ig);
+
             for (Word word : book.getWords()) {
                 TreeItem<WordTree> wordItem = makeBranch(word, bookItem);
             }
@@ -204,41 +198,11 @@ public class WordsUI extends Application {
 
         layout.getChildren().add(bookTree);
 
-
-//        // Add a button for adding new book
-////        Button addBookButton = new Button("Add a new book");
-////        addBookButton.setOnAction(e -> addBook());
-////        layout.getChildren().add(addBookButton);
-//
-//        Button addBookButton = new Button("Add a new book");
-//        //addBookButton.setOnAction(e -> addBook());
-//        //layout.getChildren().add(addBookButton);
-//
-//        Button removeBookButton = new Button("Remove an existing book");
-//        //addBookButton.setOnAction(e -> addBook());
-//        //layout.getChildren().add(addBookButton);
-//
-//        ComboBox<String> comboBox = new ComboBox<>();
-//        comboBox.getItems().addAll(addBookButton.toString(), removeBookButton.toString());
-//        comboBox.setPromptText("Options");
-//
-//        comboBox.setOnAction(e ->
-//        {
-//            String selection = comboBox.getValue();
-//            if (selection.equals(addBookButton.toString())) {
-//                addBook();
-//            } else if (selection.equals(addBookButton.toString())) {
-//                //TODO: Implement removeBook
-//            }
-//        });
-//
-//        layout.getChildren().add(comboBox);
-
-
         home = new Scene(layout);
+        home.getStylesheets().add("Garage.css");
+
         window.setScene(home);
         window.show();
-
 
     }
 
