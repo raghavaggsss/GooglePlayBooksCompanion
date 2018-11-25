@@ -17,6 +17,8 @@ import models.Word;
 import models.WordTree;
 import models.exceptions.InvalidBookTitleException;
 
+import javax.imageio.IIOException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class WordsUI extends Application {
@@ -29,6 +31,11 @@ public class WordsUI extends Application {
 
 
     public static void main(String[] args) {
+        try {
+            loadGooglePlayBookData("TNOTR.docx"); }
+        catch (IOException e) {
+            System.out.println("FUCK");
+        }
         launch(args);
     }
 
@@ -210,5 +217,9 @@ public class WordsUI extends Application {
         TreeItem<WordTree> item = new TreeItem<>(book);
         parent.getChildren().add(item);
         return item;
+    }
+
+    public static void loadGooglePlayBookData(String filename) throws IOException {
+        Process p = Runtime.getRuntime().exec("python3 src/PlayBooks/googlePlayBooks.py "+ filename);
     }
 }
