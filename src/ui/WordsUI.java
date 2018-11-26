@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 import models.*;
 import models.Button;
+
 import models.exceptions.InvalidBookTitleException;
 import models.exceptions.InvalidStringException;
 import models.exceptions.NoMeaningFound;
@@ -28,14 +29,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static models.InputOutput.openDictionary;
-import static models.InputOutput.readWordMeanings;
+import static models.InputOutput.*;
 
 public class WordsUI extends Application {
 
     POS[] pos_tags = POS.values();
 
-    ArrayList<Book> books = new ArrayList<>();
+    ArrayList<Book> books;
     private Stage window;
     private Scene home;
     private Scene book;
@@ -49,6 +49,50 @@ public class WordsUI extends Application {
         Stage modal = new Stage();
         modal.initModality(Modality.APPLICATION_MODAL);
         return modal;
+    }
+
+    public void addWord(Book book) {
+        Stage addWordStage = modalInit();
+        addWordStage.setTitle("Add a new word to "+ book.getBookTitle());
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setVgap(8);
+        grid.setHgap(10);
+
+        Scene s = new Scene(grid);
+
+        Label wordLabel = new Label("Word");
+        GridPane.setConstraints(wordLabel, 0, 0);
+
+        TextField wordInput = new TextField();
+        wordInput.setPromptText("Word");
+        GridPane.setConstraints(wordInput, 1, 0);
+
+        Label meaningLabel = new Label("Meaning");
+        GridPane.setConstraints(meaningLabel, 0, 1);
+
+        TextField meaningInput = new TextField();
+        meaningInput.setPromptText("Meaning");
+        GridPane.setConstraints(meaningInput, 1, 1);
+
+        Button addWord = new Button("Add Word");
+        addWord.setOnAction(e -> {
+            try {
+                book.insertWord(new Word(wordInput.getText() ,meaningInput.getText()));
+            }
+            catch (InvalidStringException e1) {
+                System.out.println("Invalid Word");
+            }
+        });
+
+        GridPane.setConstraints(addWord, 1, 3);
+
+        grid.getChildren().addAll(wordLabel, wordInput, meaningInput, meaningLabel, addWord);
+
+        addWordStage.setScene(s);
+        addWordStage.showAndWait();
+        refreshHome();
     }
 
     public void addBook() {
@@ -214,6 +258,8 @@ public class WordsUI extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        books = loadBooks();
+
         Book theBookThief = new Book("The Book Thief");
 
 
@@ -225,7 +271,9 @@ public class WordsUI extends Application {
         books.add(book2);
 
         window = primaryStage;
-        window.setOnCloseRequest(e -> window.close());
+        window.setOnCloseRequest(e -> {
+            saveBooks(books);
+            window.close();});
 
         refreshHome();
         window.show();
@@ -285,6 +333,10 @@ public class WordsUI extends Application {
                     WordTree wt = newValue.getValue();
                     if (wt instanceof Word) {
                         wordToMeaning((Word) wt);
+                    }
+
+                    else if (wt instanceof Book) {
+                        addWord((Book) wt);
                     }
                 })
         );

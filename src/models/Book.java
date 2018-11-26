@@ -2,10 +2,11 @@ package models;
 
 import models.exceptions.InvalidBookTitleException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public class Book extends Words {
+public class Book extends Words implements Serializable {
     private String title;
     private String author;
     private ArrayList<Character> characters;
