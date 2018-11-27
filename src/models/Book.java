@@ -4,16 +4,29 @@ import models.exceptions.InvalidBookTitleException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 
-public class Book extends Words implements Serializable {
+public class Book implements Serializable, WordTree {
     private String title;
     private String author;
     private ArrayList<Character> characters;
+    private HashSet<Word> words;
+
+    public void insertWord(Word word) {
+        //setChanged();
+        //notifyObservers(word);
+        words.add(word);
+    }
+
+    public HashSet<Word> getWords() {
+        return words;
+    }
 
     // EFFECT: Create a new book object with title
     public Book(String title) throws InvalidBookTitleException {
-        super();
+        //super();
+        words = new HashSet<>();
         if (!title.equals("")) {
             this.title = title;
             this.author = "";
@@ -24,7 +37,8 @@ public class Book extends Words implements Serializable {
     }
 
     public Book(String title, String author) throws InvalidBookTitleException {
-        super();
+        //super();
+        words = new HashSet<>();
         if (!title.equals("")) {
             this.title = title;
             this.author = author;
@@ -34,11 +48,11 @@ public class Book extends Words implements Serializable {
         }
     }
 
-    @Override
-    public void printWords() {
-        System.out.println("The words for " + title + " are:");
-        super.printWords();
-    }
+//    @Override
+//    public void printWords() {
+//        System.out.println("The words for " + title + " are:");
+//        super.printWords();
+//    }
 
     public ArrayList<Character> getCharacters() {
         return characters;
@@ -57,10 +71,10 @@ public class Book extends Words implements Serializable {
         }
     }
 
-    @Override
-    public void printBookTitle() {
-        System.out.println(title);
-    }
+//    @Override
+//    public void printBookTitle() {
+//        System.out.println(title);
+//    }
 
     public String getBookTitle() {
         return title;

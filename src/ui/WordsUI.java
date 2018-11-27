@@ -265,10 +265,10 @@ public class WordsUI extends Application {
 
         theBookThief.insertWord(new Word("vehement", "YO testing"));
         theBookThief.insertWord(new Word("immoral", "not moral"));
-        books.add(theBookThief);
+        //books.add(theBookThief);
 
         Book book2 = new Book("Book II");
-        books.add(book2);
+        //books.add(book2);
 
         window = primaryStage;
         window.setOnCloseRequest(e -> {

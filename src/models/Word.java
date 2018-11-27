@@ -5,9 +5,10 @@ import models.exceptions.InvalidMeaningException;
 import models.exceptions.InvalidStringException;
 import models.exceptions.InvalidWordException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Word implements WordTree {
+public class Word implements WordTree, Serializable {
     private String word;
     private String meaning;
     private POS posTag;

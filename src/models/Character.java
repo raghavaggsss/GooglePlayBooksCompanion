@@ -35,7 +35,7 @@ public class Character extends Words {
 
     @Override
     public void printBookTitle() {
-        book.printBookTitle();
+        //book.printBookTitle();
     }
 
     @Override
