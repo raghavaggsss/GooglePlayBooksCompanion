@@ -51,6 +51,31 @@ public class WordsUI extends Application {
         return modal;
     }
 
+    public void messageBox(String message) {
+        Stage meaningWindow = modalInit();
+
+        //meaningWindow.setTitle(word.getWord());
+
+        Text text = new Text(message);
+
+        VBox meaning = new VBox(20);
+        meaning.setPadding(new Insets(20,20,20,20));
+        meaning.setAlignment(Pos.CENTER);
+        meaning.getChildren().add(text);
+
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> {
+            meaningWindow.close();
+        });
+        meaning.getChildren().add(backButton);
+
+        Scene meaningScene = new Scene(meaning);
+        meaningWindow.setScene(meaningScene);
+
+        meaningWindow.showAndWait();
+
+    }
+
     public void addWord(Book book) {
         Stage addWordStage = modalInit();
         addWordStage.setTitle("Add a new word to "+ book.getBookTitle());
@@ -80,8 +105,10 @@ public class WordsUI extends Application {
         addWord.setOnAction(e -> {
             try {
                 book.insertWord(new Word(wordInput.getText() ,meaningInput.getText()));
+                messageBox(wordInput.getText() + " successfully added!");
             }
             catch (InvalidStringException e1) {
+                messageBox("Invalid Word. Please try again");
                 System.out.println("Invalid Word");
             }
         });
@@ -192,6 +219,7 @@ public class WordsUI extends Application {
             } catch (InvalidBookTitleException f) {
                 bookAdditionResult.setText("Invalid Book Title");
             } finally {
+                messageBox(bookAdditionResult.getText());
                 System.out.println(bookAdditionResult.getText());
             }
 
