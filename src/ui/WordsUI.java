@@ -20,9 +20,7 @@ import javafx.util.Pair;
 import models.*;
 import models.Button;
 
-import models.exceptions.InvalidBookTitleException;
-import models.exceptions.InvalidStringException;
-import models.exceptions.NoMeaningFound;
+import models.exceptions.*;
 
 import javax.imageio.IIOException;
 import java.io.IOException;
@@ -221,6 +219,7 @@ public class WordsUI extends Application {
             } finally {
                 messageBox(bookAdditionResult.getText());
                 System.out.println(bookAdditionResult.getText());
+                addBookStage.close();
             }
 
         });
@@ -235,7 +234,7 @@ public class WordsUI extends Application {
     }
 
 
-    public void wordToMeaning(Word word) {
+    public void wordToMeaning(Word word, Book book) {
         Stage meaningWindow = modalInit();
         meaningWindow.setTitle(word.getWord());
 
@@ -247,10 +246,23 @@ public class WordsUI extends Application {
         meaning.getChildren().add(text);
 
         Button backButton = new Button("Back");
+        Button removeButton = new Button("Remove " + word.getWord());
+        removeButton.setOnAction(e -> {
+            try {
+                book.removeWord(word);
+                refreshHome();
+                messageBox(word.getWord() + " removed!");
+                meaningWindow.close();
+            }
+            catch (NoSuchWordException f) {
+                System.out.println("Impossible");
+            }
+
+        });
         backButton.setOnAction(e -> {
             meaningWindow.close();
         });
-        meaning.getChildren().add(backButton);
+        meaning.getChildren().addAll(removeButton);
 
         Scene meaningScene = new Scene(meaning);
         meaningWindow.setScene(meaningScene);
@@ -259,30 +271,30 @@ public class WordsUI extends Application {
 
     }
 
-    public Scene bookToWords(Book b) {
-        VBox wordsLayout = new VBox(20);
-        wordsLayout.setAlignment(Pos.CENTER);
-        ////
-        ListView<Word> listView = new ListView<>();
-
-//        ArrayList<Button> buttons = new ArrayList<>();
-//        for (Word word : b.getWords()) {
-//            Button wordButton = new Button(word.getWord());
-//            wordButton.setOnAction(e -> wordToMeaning(word));
-//            //wordsLayout.getChildren().add(wordButton);
-//            buttons.add(wordButton);
-//        }
-        //wordsLayout.getChildren().addAll(buttons);
-
-        /////
-        listView.getItems().addAll(b.getWords());
-        wordsLayout.getChildren().add(listView);
-
-        listView.setOnMouseClicked(e -> wordToMeaning((listView.getSelectionModel().getSelectedItems().get(0))));
-
-        book = new Scene(wordsLayout, 200, 200);
-        return book;
-    }
+//    public Scene bookToWords(Book b) {
+//        VBox wordsLayout = new VBox(20);
+//        wordsLayout.setAlignment(Pos.CENTER);
+//        ////
+//        ListView<Word> listView = new ListView<>();
+//
+////        ArrayList<Button> buttons = new ArrayList<>();
+////        for (Word word : b.getWords()) {
+////            Button wordButton = new Button(word.getWord());
+////            wordButton.setOnAction(e -> wordToMeaning(word));
+////            //wordsLayout.getChildren().add(wordButton);
+////            buttons.add(wordButton);
+////        }
+//        //wordsLayout.getChildren().addAll(buttons);
+//
+//        /////
+//        listView.getItems().addAll(b.getWords());
+//        wordsLayout.getChildren().add(listView);
+//
+//        listView.setOnMouseClicked(e -> wordToMeaning((listView.getSelectionModel().getSelectedItems().get(0))));
+//
+//        book = new Scene(wordsLayout, 200, 200);
+//        return book;
+//    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -333,8 +345,7 @@ public class WordsUI extends Application {
         menu.getItems().add(addBook);
         MenuItem removeBook = new MenuItem("Remove Book");
         //TODO: Implement remove book and call here
-        removeBook.setOnAction(e -> {
-        });
+        removeBook.setOnAction(e -> removeBook());
         menu.getItems().add(removeBook);
 
         layout.getChildren().add(menuBar);
@@ -360,7 +371,8 @@ public class WordsUI extends Application {
                 {
                     WordTree wt = newValue.getValue();
                     if (wt instanceof Word) {
-                        wordToMeaning((Word) wt);
+                        Book parentBook = (Book) newValue.getParent().getValue();
+                        wordToMeaning((Word) wt, parentBook);
                     }
 
                     else if (wt instanceof Book) {
@@ -405,5 +417,59 @@ public class WordsUI extends Application {
             return meaning;
         }
 
+    }
+
+    public void removeBook(){
+
+        Stage removeBookStage = modalInit();
+        removeBookStage.setTitle("Remove a book");
+
+        GridPane grid = new GridPane();
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setVgap(8);
+        grid.setHgap(10);
+
+        Scene s = new Scene(grid);
+
+        Label titleLabel = new Label("Book Title");
+        GridPane.setConstraints(titleLabel, 0, 0);
+
+        TextField titleInput = new TextField();
+        titleInput.setPromptText("Title");
+        GridPane.setConstraints(titleInput, 1, 0);
+
+        Label authorLabel = new Label("Book Author");
+        GridPane.setConstraints(authorLabel, 0, 1);
+
+        TextField authorInput = new TextField();
+        authorInput.setPromptText("Optional");
+        GridPane.setConstraints(authorInput, 1, 1);
+
+        Button removeBook = new Button("Remove Book");
+
+        removeBook.setOnAction(e-> {
+            try {
+                Book b = new Book(titleInput.getText(), authorInput.getText());
+                if (!books.contains(b)) {
+                    messageBox("No such book exists!");
+                } else {
+                    books.remove(b);
+                    messageBox(titleInput.getText() + " removed successfully!");
+                }
+            }
+            catch (InvalidBookTitleException f) {
+                messageBox("No such book exists!");
+            }
+
+        });
+
+        GridPane.setConstraints(removeBook, 1, 2);
+
+        grid.getChildren().addAll(titleLabel, titleInput, authorInput, authorLabel,
+                removeBook);
+
+        removeBookStage.setScene(s);
+        removeBookStage.showAndWait();
+        refreshHome();
     }
 }

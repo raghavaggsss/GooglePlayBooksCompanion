@@ -1,6 +1,8 @@
 package models;
 
 import models.exceptions.InvalidBookTitleException;
+import models.exceptions.NoSuchBook;
+import models.exceptions.NoSuchWordException;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -98,4 +100,14 @@ public class Book implements Serializable, WordTree {
     public String toString() {
         return this.getBookTitle();
     }
+
+    public void removeWord(Word word) throws NoSuchWordException {
+        if (!words.contains(word)) {
+            throw new NoSuchWordException();
+        }
+        else {
+            words.remove(word);
+        }
+    }
+
 }
